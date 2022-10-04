@@ -1,11 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import "./App.css";
 
 function App() {
-    const [threads, setThreads] = useState<Message[]>([]);
+    const [threads, setThreads] = useState<Thread[]>([]);
     const [update, setUpdate] = useState(false);
     useEffect(() => {
-        axios.get<Message[]>("http://localhost:8000/threads")
+        axios.get<Thread[]>("http://localhost:8000/threads")
             .then(response => {
                 setThreads(response.data)
             });
@@ -30,27 +31,42 @@ function App() {
     );
 }
 
-function ThreadListItem(props: { thread: Message }) {
+function ThreadListItem(props: { thread: Thread }) {
     const thread = props.thread
     return <li className="card mt-2">
         <div className="card-title d-flex justify-content-between align-items-center mx-3">
-            <span>{thread.sender_id}</span> <span className="fw-bold">Some subject</span>
-            <span className="badge bg-primary rounded-pill">14</span>
+            <img src={require("./threadstarter.jpg")} className="img rounded" style={{maxHeight: 5 + "em"}}/>
+            <span className="fw-bold">{thread.subject}</span>
+            <span className="badge bg-primary rounded-pill">2</span>
         </div>
-        <div className="card-body text-center">{thread.message}</div>
+        {/*<div className="card-body text-center">{thread.subject}</div>*/}
     </li>;
 }
 
 function ThreadReply(props: { reply: Message }) {
-    return <li className={"card mb-1 w-75"}>
-        <div className="card-title d-flex justify-content-between align-items-center mx-3">
-            <span>{props.reply.sender_id}</span>
-            <span className="fw-bold">{props.reply.message}</span>
+
+    const timestamp = new Date(props.reply.timestamp).toUTCString();
+    return <>
+        <div className="bullet green"></div>
+        <div className="time">{timestamp}</div>
+        <div className={"card my-2 info"}>
+            <div className="row">
+                <div className="col-1 my-auto ms-3 me-1">
+                    <img src={require("./profile.jpg")} className="img rounded" style={{maxHeight: 5 + "em"}}/>
+                </div>
+                <div className="col-10">
+                    <div className="card-body ms-0 vstack">
+                        <div className="card-title fw-semibold">Hans van Os</div>
+                        <div className="card-text">{props.reply.message}</div>
+                        {/*<div className="card-text"><small className="text-muted"></small></div>*/}
+                    </div>
+                </div>
+            </div>
         </div>
-    </li>;
+    </>;
 }
 
-function Threads(props: { threads: Message[], update: boolean, setUpdate: any }) {
+function Threads(props: { threads: Thread[], update: boolean, setUpdate: any }) {
 
     const [selected, setSelected] = useState<Map<number, boolean>>(new Map());
 
@@ -75,12 +91,19 @@ function Threads(props: { threads: Message[], update: boolean, setUpdate: any })
                     <ThreadListItem key={`thread_${index}`} thread={thread}/>
                 </span>
                 <span className={isHidden(index)}>
+                    <div className="timeline">
+                        <ul>
                     {thread.replies.map((reply: Message, subIndex) => {
-                        return <ThreadReply key={`reply_${subIndex}`} reply={reply}/>
+                        return <li>
+                            <ThreadReply key={`reply_${subIndex}`} reply={reply}/></li>
                     })
                     }
-                    <ReplyToThread key={`reply_${index}`} setUpdate={props.setUpdate} update={props.update} index={index+1}/>
-                    </span>
+                            <ReplyToThread key={`reply_${index}`} setUpdate={props.setUpdate} update={props.update}
+                                           index={index + 1}/>
+                        </ul>
+                    </div>
+                </span>
+
 
             </div>
         )
@@ -93,17 +116,23 @@ function Threads(props: { threads: Message[], update: boolean, setUpdate: any })
 }
 
 
-type Message = {
+type Thread = {
     sender_id: number
-    message: string
+    subject: string
     receivers: []
     replies: []
     timestamp: string
 }
 
+type Message = {
+    sender_id: number
+    message: string
+    timestamp: string
+}
+
 function NewThread(props: { update: boolean, setUpdate: any }) {
 
-    const [message, setMessage] = useState("");
+    const [subject, setSubject] = useState("");
 
     function startNewThread() {
         axios({
@@ -111,24 +140,24 @@ function NewThread(props: { update: boolean, setUpdate: any }) {
             url: "http://localhost:8000/threads/start",
             data: {
                 "sender_id": 1,
-                "message": message
+                "subject": subject
             }
         });
     }
 
     function handleInput(event: any) {
-        setMessage(event.target.value);
+        setSubject(event.target.value);
     }
 
     return (
-        <div className="col-auto mb-2">
-            <input type="text" className="form-text" placeholder={"Choose a subject"} value={message}
+        <div className="col mb-2 d-flex">
+            <input type="text" className="form-control" placeholder={"What is the next chat about?"} value={subject}
                    onChange={handleInput}/>
             <button className="btn btn-primary" onClick={() => {
                 startNewThread();
-                setMessage("");
+                setSubject("");
                 props.setUpdate(!props.update)
-            }}>New Thread
+            }}>Create
             </button>
         </div>
     )
@@ -157,7 +186,10 @@ function ReplyToThread(props: { update: boolean, setUpdate: any, index: number }
     return (
         <div className="row">
             <div className="col-10 pr-0">
-                <textarea className="form-control" id="new-message" rows={1} placeholder={"Type your message"} value={message}
+                <textarea className="form-control" id="new-message" rows={2} wrap={"hard"}
+                          placeholder={"Type your message"}
+                          value={message}
+                          style={{resize: "none"}}
                           onChange={handleInput}></textarea>
             </div>
             <div className="col-2 pl-0">
