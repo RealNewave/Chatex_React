@@ -6,10 +6,9 @@ export function ThreadReply(props: { reply: Message }) {
     const timestamp = new Date(props.reply.timestamp).toUTCString();
     return <>
         <div className="row">
-            <div className="col-1 bullet green"/>
-            <div className="col-11 time">{timestamp}</div>
+            <div className="col-12">{timestamp}</div>
         </div>
-        <div className={"card my-2 ms-5 info"}>
+        <div className={"card my-2 info"}>
             <div className="row">
                 <div className="col-2 mt-1 mb-auto ms-2">
                     <img src={require("./profile.jpg")} className="img rounded" style={{maxHeight: 5 + "em"}}/>
