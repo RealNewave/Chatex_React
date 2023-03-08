@@ -1,0 +1,19 @@
+.smoothin {
+    animation-duration: 1s;
+    animation-name: slidein;
+    animation-direction: normal;
+}
+
+@keyframes slidein {
+    from {
+        margin-left: 50%;
+    }
+
+    50% {
+        margin-left: 25%;
+    }
+
+    to {
+        margin-left: 0%;
+    }
+}

@@ -2,7 +2,7 @@ export type Thread =
     {
         sender_id: number
         subject: string
-        receivers: []
+        receivers: string[]
         replies: []
         timestamp: string
     }
