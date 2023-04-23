@@ -11,7 +11,7 @@ export function ThreadReply(props: { reply: Message }) {
         <div className={"card my-2 info"}>
             <div className="row">
                 <div className="col-2 mt-1 mb-auto ms-2">
-                    <img src={require("./profile.jpg")} className="img rounded" style={{maxHeight: 5 + "em"}}/>
+                    <img src={require("../assets/profile.jpg")} className="img rounded" style={{maxHeight: 5 + "em"}}/>
                 </div>
                 <div className="col-9">
                     <div className="card-body ms-0 vstack">
