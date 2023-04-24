@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import "./App.css";
+import "./App.scss";
 import {Thread} from "./thread-list/Thread";
 import {ThreadReply} from "./thread-list/thread-reply";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -19,23 +19,23 @@ function App() {
                 <div className="row align-items-start">
                     <div className="col-4 border vh-100 ">
                         <div className="vstack gap-1 mb-2 ">
-                            <ProfilePreview username="Hans van Os" subtext="Software Engineer" image="profile"/>
-                            <div className="border rounded shadow">
-                                <ProfilePreview username="Hans van Os" subtext="21 Messages" image="profile"/>
-                                <ProfilePreview username="Youssef Airoude" subtext="HO 1 request"
-                                                image="threadstarter"/>
-                            </div>
+                            <ProfileDetails username="Hans van Os" subtext="Software Engineer" image="profile"/>
+                            {/*<div className="border rounded shadow">*/}
+                            {/*    <ProfilePreview username="Hans van Os" subtext="21 Messages" image="profile"/>*/}
+                            {/*    <ProfilePreview username="Youssef Airoude" subtext="HO 1 request"*/}
+                            {/*                    image="threadstarter"/>*/}
+                            {/*</div>*/}
                         </div>
                         <div className="container vstack gap-1">
                             <div className="d-flex justify-content-between">
                                 <h4>Message <span className="text-primary">(29)</span></h4>
                                 <FontAwesomeIcon icon={regular("pen-to-square")}/>
                             </div>
-                            <div className="form-group position-relative">
-                                <input className="form-control" type="search" placeholder="Search"/>
-                                <FontAwesomeIcon icon={regular("compass")}
-                                                 className="position-absolute top-50 start-100 pe-5 translate-middle"/>
-                            </div>
+                            <span>
+                                <input className="search" type="search" placeholder="Search"/>
+                                <FontAwesomeIcon icon={regular("compass")} className="icon" fixedWidth
+                                                 transform="left-30"/>
+                            </span>
                             <div className="d-flex justify-content-between mt-2">
                                 <span className="text-secondary"><FontAwesomeIcon icon={regular("gem")}
                                                                                   className="me-1"/>PINNED</span>
@@ -84,47 +84,25 @@ function App() {
                     <div className="col-2 border vh-100">Chat Details</div>
                 </div>
             </div>
-            {/*<div className="container-fluid">*/}
-            {/*    <div className="row">*/}
-            {/*        <ul className="col-3 list-group">*/}
-            {/*            {threads.map((thread, index) =>*/}
-            {/*                <li key={index} className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">*/}
-            {/*                    {thread.subject}*/}
-            {/*                    <span className="badge bg-primary rounded-pill">14</span>*/}
-            {/*                </li>*/}
-            {/*            )}*/}
-            {/*        </ul>*/}
-            {/*        <div className="col-7">*/}
-            {/*            <h3>subject 1</h3>*/}
-            {/*            <ThreadReply reply={*/}
-            {/*                {*/}
-            {/*                    "sender_id": 1,*/}
-            {/*                    "message": "hello",*/}
-            {/*                    "timestamp": "2023-03-07"*/}
-            {/*                }}/>*/}
-            {/*            <ThreadReply reply={*/}
-            {/*                {*/}
-            {/*                    "sender_id": 2,*/}
-            {/*                    "message": "hi!",*/}
-            {/*                    "timestamp": "2023-03-07"*/}
-            {/*                }}/>*/}
-            {/*            <ThreadReply reply={*/}
-            {/*                {*/}
-            {/*                    "sender_id": 2,*/}
-            {/*                    "message": "So you were wondering about subject 1 right? Well let me tell you!",*/}
-            {/*                    "timestamp": "2023-03-07"*/}
-            {/*                }}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    /!*<Threads threads={threads} setUpdate={setUpdate} update={update}/>*!/*/}
-            {/*    /!*<div className="row col-6">*!/*/}
-            {/*    /!*    <div className="row d-flex justify-content-end">*!/*/}
-            {/*    /!*        <NewThread update={update} setUpdate={setUpdate}/>*!/*/}
-            {/*    /!*    </div>*!/*/}
-            {/*    /!*</div>*!/*/}
-            {/*</div>*/}
         </>
     );
+}
+
+function ProfileDetails(props: any) {
+    const username = props.username;
+    const subtext = props.subtext;
+    const image = props.image
+    return (
+        <>
+            <div className="profile-details">
+                <img className="left" src={require(`./assets/${image}.jpg`)}/>
+                <div className="flexcolumn">
+                    <h5>{username}</h5>
+                    <small className="text-secondary">{subtext}</small>
+                </div>
+            </div>
+        </>
+    )
 }
 
 function ProfilePreview(props: any) {
@@ -133,17 +111,11 @@ function ProfilePreview(props: any) {
     const image = props.image
     return (
         <>
-            <div className="card border-0 border-bottom btn btn-outline-light text-dark">
-                <div className="row g-0">
-                    <div className="col-md-3 pt-3 ps-3">
-                        <img src={require(`./assets/${image}.jpg`)} className="card-img-top rounded-circle h-75"/>
-                    </div>
-                    <div className="col-md-9">
-                        <div className="card-body">
-                            <h5 className="card-title">{username}</h5>
-                            <p className="card-text"><small className="text-secondary">{subtext}</small></p>
-                        </div>
-                    </div>
+            <div className="custom-card">
+                <img className="left" src={require(`./assets/${image}.jpg`)}/>
+                <div className="flexcolumn">
+                    <h5>{username}</h5>
+                    <small className="text-secondary">{subtext}</small>
                 </div>
             </div>
         </>
@@ -157,23 +129,14 @@ function MessagePreview(props: any) {
     const time = props.time;
     return (
         <>
-            <button className="card border-0 border-bottom btn btn-outline-light text-dark">
-                <div className="row g-0">
-                    <div className="col-md-3 pt-3 ps-3">
-                        <img src={require(`./assets/${image}.jpg`)} className="card-img-top rounded-circle h-75"/>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="card-body">
-                            <p className="card-title">{username}</p>
-                            <p className="card-text text-truncate"><small className="text-secondary">{subtext}</small>
-                            </p>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <p className="card-text mt-3"><small className="text-secondary">{time}</small></p>
-                    </div>
+            <div className="custom-card">
+                <img className="left" src={require(`./assets/${image}.jpg`)}/>
+                <div className="flexcolumn center">
+                    <p>{username}</p>
+                    <small>{subtext}</small>
                 </div>
-            </button>
+                <p className="right"><small className="text-secondary">{time}</small></p>
+            </div>
         </>
     )
 }
@@ -187,10 +150,10 @@ function MessageReceived(props: any) {
         <>
             <div className="card border-0 text-dark pe-5">
                 <div className="row g-0">
-                    <div className="col-md-3 pt-3 ps-3">
+                    <div className="col-3 pt-3 ps-3">
                         <img src={require(`./assets/${image}.jpg`)} className="card-img-top rounded-circle h-50 w-50"/>
                     </div>
-                    <div className="col-md-9">
+                    <div className="col-9">
                         <div className="card-body text-start">
                             <h5 className="card-title">{username} <small className="text-secondary ms-2">{time}</small>
                             </h5>
@@ -214,7 +177,7 @@ function MessageSent(props: any) {
         <>
             <div className="card border-0 text-dark ps-5">
                 <div className="row g-0">
-                    <div className="col-md-9">
+                    <div className="col-9">
                         <div className="card-body text-end">
                             <h5 className="card-title"><small className="text-secondary me-2">{time}</small>{username}
                             </h5>
@@ -223,7 +186,7 @@ function MessageSent(props: any) {
                             </p>
                         </div>
                     </div>
-                    <div className="col-md-3 pt-3 ps-3">
+                    <div className="col-3 pt-3 ps-3">
                         <img src={require(`./assets/${image}.jpg`)} className="card-img-top rounded-circle h-50 w-50"/>
                     </div>
                 </div>
