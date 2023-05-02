@@ -15,7 +15,7 @@ function ProfileDetails(props: any) {
     )
 }
 
-function Message(props: any) {
+export function Message(props: any) {
     const username = props.username;
     const subtext = props.subtext;
     const time = props.time;
