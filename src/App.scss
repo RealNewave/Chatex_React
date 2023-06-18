@@ -1,3 +1,7 @@
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
 html {
   font-size: 15px;
   font-family: "Calibri", serif;
@@ -23,7 +27,18 @@ html {
 
 }
 
+.new-thread {
+  --color: slateblue;
+  grid-area: title;
+  margin: 0 50px;
+  background-color: #2a2c2d;
+  border-color: slateblue;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
 .v-card {
+  --color: palevioletred;
   flex: 0 1 calc(80% / 3);
   min-width: 200px;
   max-width: calc(80% / 3);
@@ -48,6 +63,7 @@ html {
     margin: 0 10px;
   }
 
+
   .content {
     grid-area: content;
     font-size: 12px;
@@ -65,46 +81,63 @@ html {
 
     u {
       text-decoration: underline;
-      text-decoration-color: palevioletred;
+      text-decoration-color: slateblue;
     }
   }
 }
 
-.split-view {
-  display: grid;
-  grid-template-areas: "l r";
-  grid-template-columns: 1fr 2fr;
-  height: 90vh;
-}
-
-.list-view {
-  grid-area: l;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid slateblue;
+.clickable {
+  &:hover {
+    box-shadow: 0 15px 24px var(--color);
+  }
 }
 
 .detail-view {
-  grid-area: r;
   border: 1px solid palevioletred;
+  position: relative;
+
+  .messages {
+    max-height: 90vh;
+    overflow: scroll;
+  }
+
+  .subject {
+    text-align: center;
+  }
+
+  .send-message {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-radius: 5px;
+
+    &:after {
+      //TODO
+    }
+  }
 }
 
 .text-bubble {
   display: grid;
   grid-template-areas: "l r";
-  grid-template-columns: 1fr 7fr;
+  grid-template-columns: 0fr 7fr;
 
 
   .profile {
     grid-area: l;
     justify-self: center;
     align-self: center;
+    width: 80%;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 10px;
   }
 
   .details-container {
     display: flex;
     flex-direction: column;
-    margin: 10px 10px 10px 0;
+    margin: 10px;
     padding: 10px;
     gap: 5px;
     border: 1px solid purple;
@@ -158,10 +191,20 @@ html {
 
   }
 
-  .flexcolumn {
+  .flex-column {
     display: flex;
     flex-direction: column;
     align-items: start;
+  }
+
+  .profile {
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 10px;
+  }
+
+  .active {
   }
 }
 
