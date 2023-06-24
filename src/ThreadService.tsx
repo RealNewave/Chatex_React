@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 
 export function getThreads(): Promise<Thread[]>{
     return axios.get("http://localhost:8080/api/v1/messages/")
         .then(response => response.data);
 }
 
-export function createThread(subject: string): void {
-    axios.post("http://localhost:8080/api/v1/messages/");
+export function createThread(subject: string): Promise<AxiosResponse<any>> {
+    return axios.post("http://localhost:8080/api/v1/messages/");
 }
 
 export function getMessages(threadId: number): Promise<Message[]>{

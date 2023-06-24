@@ -175,9 +175,20 @@ function NewThread() {
     const starter: string = "Hans van Os";
 
     const [showButton, setShowButton] = useState(true);
+    const [subject, setSubject] = useState("");
 
     const showForm = () => {
         setShowButton(!showButton);
+    }
+
+    const submitForm = () => {
+        console.log(subject);
+        threadService.createThread(subject)
+            .then(() => {
+                setSubject("");
+                showForm();
+            });
+
     }
 
     return (
@@ -189,18 +200,14 @@ function NewThread() {
             {
                 !showButton &&
                 <>
-                    <div className="">
-                        {/*Image placeholder*/}
-                    </div>
                     <div className="title">
-
+                        <form>
+                            <input type="text" placeholder="What is this thread about?" value={subject} onChange={(event) => setSubject(event.target.value)}/>
+                        </form>
                     </div>
                     <div className="content">
-
+                        <button type="submit" onClick={submitForm}>Create</button>
                     </div>
-                    <p className="subtext">
-                        {/*Started by: <u>{starter}</u>*/}
-                    </p>
                 </>
             }
         </div>
