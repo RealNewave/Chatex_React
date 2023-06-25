@@ -1,35 +1,38 @@
 import axios, {AxiosResponse} from "axios";
 
-export function getThreads(): Promise<Thread[]>{
-    return axios.get("http://localhost:8080/api/v1/messages/")
+const questionUrl = "http://localhost:8080/api/v1/questions/";
+
+export function createQuestion(subject: string): Promise<AxiosResponse<void>> {
+    return axios.post(questionUrl, {subject});
+}
+
+export function getQuestions(): Promise<Question[]>{
+    return axios.get(questionUrl)
         .then(response => response.data);
 }
 
-export function createThread(subject: string): Promise<AxiosResponse<any>> {
-    return axios.post("http://localhost:8080/api/v1/messages/");
+export function getQuestion(questionId: number): Promise<Question>{
+    return axios.get(questionUrl + questionId)
+        .then(response => response.data)
 }
 
-export function getMessages(threadId: number): Promise<Message[]>{
-    return axios.get("https://jsonplaceholder.typicode.com/posts")
-        .then(response => response.data);
+export function answerQuestion(questionId: number, answer: string): Promise<AxiosResponse<void>> {
+    return axios.post(questionUrl + questionId, {username: null, answer});
 }
 
-export function addMessage(message: string, threadId: number): void {
-    axios.post("http://localhost:8080/api/v1/messages/" + threadId);
-}
-
-export type Message =
+export type Answer =
     {
-        userId: number
-        body: string
-        title: string
+        id: number;
+        username: string
+        answer: string
+        timestamp: string
     }
 
-export type Thread =
+export type Question =
     {
-        sender_id: number
-        subject: string
-        receivers: string[]
-        replies: []
+        id: number;
+        starter: string
+        question: string
+        answers: []
         timestamp: string
     }

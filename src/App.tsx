@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import "./App.scss";
 import *  as threadService from "./ThreadService";
-import {Message, Thread} from "./ThreadService";
-import {BrowserRouter, Link, NavLink, Route, Router, Routes} from "react-router-dom";
+import {Answer, Question} from "./ThreadService";
+import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/:threadId" element={<MessageDetails/>}/>
+                <Route path="/:questionId" element={<MessageDetails/>}/>
             </Routes>
         </BrowserRouter>
     );
@@ -25,33 +25,47 @@ function Home() {
 
 function MessageDetails(props: any) {
 
-    const subject = props.subject;
+    const questionId = document.location.pathname.slice(1);
 
-    const [messages, setMessages] = useState([] as Message[]);
+    const [answers, setAnswers] = useState([] as Answer[]);
+    const [answer, setAnswer] = useState("");
+
+    let question: string = "";
 
     useEffect(() => {
-        threadService
-            .getMessages(props.threadId)
-            .then(messages => setMessages(messages));
-    });
+        getAnswers();
+    }, []);
 
+    const getAnswers = () => {
+        threadService
+            .getQuestion(+questionId)
+            .then(response => {
+                question = response.question;
+                setAnswers(response.answers);
+            });
+    }
+
+
+    const sendAnswer = () => {
+        threadService.answerQuestion(+questionId, answer)
+            .then(() => {
+                getAnswers();
+                setAnswer("");
+            })
+    }
 
     return (
         <div className="detail-view">
-            <h3 className="subject">{subject || "Games!"}</h3>
+            <h3 className="subject">{question}</h3>
 
             <div className="messages">
-                {messages.map(message =>
-                    <MessageView username={message.userId} message={message.body}
-                                 time="11:27"></MessageView>
-                )}
+                {answers.map(answer => <MessageView answer={answer} key={answer.id}></MessageView>)}
             </div>
-            {/*<MessageView username="Hans van Os" message="Yo!" time="22:51"></MessageView>*/}
-            {/*<MessageView username="Youssef Airoude" message="Waddup?" time="22:51"></MessageView>*/}
-            {/*<MessageView username="Mathijs Janz" message="Ewa" time="22:51"></MessageView>*/}
-            {/*<MessageView username="Hans van Os" message="Klaar voor de ps5 gaming?" time="22:51"></MessageView>*/}
-
-            <input type="text" className="send-message" placeholder="What would you like to say?"/>
+            <div className="send-message">
+                <input type="text" placeholder="What would you like to say?" value={answer}
+                       onChange={(event) => setAnswer(event.target.value)}/>
+                <button onClick={sendAnswer}>Send</button>
+            </div>
         </div>
     )
 }
@@ -88,19 +102,17 @@ export function SubjectListCard(props: any) {
 }
 
 function MessageView(props: any) {
-    const username: string = props.username;
-    const message: string = props.message;
-    const time = props.time;
+
     return (
         <div className="text-bubble">
             <div></div>
             <div className="details-container">
                 <div className="sender-details">
-                    <div>{username}</div>
-                    <div>{time}</div>
+                    <div>{props.answer.username}</div>
+                    <div>{props.answer.time}</div>
                 </div>
                 <div className="message">
-                    {message}
+                    {props.answer.answer}
                 </div>
             </div>
         </div>
@@ -109,68 +121,49 @@ function MessageView(props: any) {
 
 function MainView() {
 
-    const [threads, setThreads] = useState([] as Thread[]);
+    const [questions, setQuestions] = useState([] as Question[]);
 
-    // useEffect(() => {
-    //     threadService
-    //         .getThreads()
-    //         .then(threads => setThreads(threads));
-    // });
+    useEffect(() => {
+        threadService
+            .getQuestions()
+            .then(questions => setQuestions(questions));
+    }, []);
 
     return (
         <div className="content-overview">
-            <NewThread/>
-            {threads.map(thread =>
-                <SubjectCard starter={thread.sender_id} usernames={thread.receivers}
-                             subject={thread.subject}/>
+            <NewQuestion/>
+            {questions.map(question =>
+                <SubjectCard question={question} key={question.id}/>
             )}
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject2"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject3"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject4"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject5"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject6"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject7"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject8"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject9"/>
-            <SubjectCard
-                starter="Hans van Os"
-                usernames={["Hans van Os", "Hans van Os", "Hans van Os", "Hans van Os", "Mathijs Janz", "Jasmijn Manenschijn", "Youssef Airoude", "Lotte Manenschijn", "Alex Ma", "Bouke van Bergen Bravenboer", "Dennis van Daalen de Jel"]}
-                subject="Subject10"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject9"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject9"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject9"/>
-            <SubjectCard starter="Hans van Os" usernames={["Hans van Os"]} subject="Subject9"/>
         </div>
     );
 }
 
 function SubjectCard(props: any) {
-    const subject: string = props.subject;
-    const usernames: string[] = props.usernames;
-    const starter: string = props.starter;
+    const question = props.question;
 
     return (
-        <Link style={{textDecoration: "inherit", color: "inherit"}} to={"/" + subject}>
+        <Link style={{textDecoration: "inherit", color: "inherit"}} to={"/" + question.id}>
             <div className="v-card clickable">
                 <div className="header">
                     {/*Image placeholder*/}
                 </div>
                 <div className="title">
-                    {subject}
+                    {question.question}
                 </div>
                 <div className="content">
-                    <div className="messages">Replies: 1</div>
-                    <div className="usercount">Users: 1</div>
+                    <div className="messages">Answers: {question.answers.length}</div>
+                    {/*<div className="usercount">Users: {question.responders.length}</div>*/}
                 </div>
                 <p className="subtext">
-                    Started by: <u>{starter}</u>
+                    Started by: <u>{question.starter}</u>
                 </p>
             </div>
         </Link>
     )
 }
 
-function NewThread() {
+function NewQuestion() {
 
     const starter: string = "Hans van Os";
 
@@ -182,8 +175,7 @@ function NewThread() {
     }
 
     const submitForm = () => {
-        console.log(subject);
-        threadService.createThread(subject)
+        threadService.createQuestion(subject)
             .then(() => {
                 setSubject("");
                 showForm();
@@ -202,7 +194,8 @@ function NewThread() {
                 <>
                     <div className="title">
                         <form>
-                            <input type="text" placeholder="What is this thread about?" value={subject} onChange={(event) => setSubject(event.target.value)}/>
+                            <input type="text" placeholder="What is this thread about?" value={subject}
+                                   onChange={(event) => setSubject(event.target.value)}/>
                         </form>
                     </div>
                     <div className="content">

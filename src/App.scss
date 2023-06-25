@@ -117,6 +117,9 @@ html {
 
 .detail-view {
   border: 1px solid $secondary-border-color;
+  height: 90vh;
+  width: 90vw;
+  margin: 0 auto;
   position: relative;
 
   .messages {
@@ -134,9 +137,13 @@ html {
     width: 100%;
     border-radius: 5px;
 
-    &:after {
-      //TODO
+    input{
+      width: 90%;
     }
+    button {
+      width: 10%;
+    }
+
   }
 }
 
