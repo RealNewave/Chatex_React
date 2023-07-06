@@ -2,27 +2,60 @@ import axios, {AxiosResponse} from "axios";
 
 const questionUrl = "http://localhost:8080/api/v1/questions/";
 
-export function createQuestion(subject: string): Promise<AxiosResponse<void>> {
-    return axios.post(questionUrl, {subject});
+let socket: WebSocket;
+let connected = false;
+
+export function closeSocket(): void{
+    if(socket){
+        socket.close();
+    }
 }
 
-export function getQuestions(): Promise<Question[]>{
-    return axios.get(questionUrl)
+export function getSocket(questionId: string, username: string): WebSocket {
+    if(socket){
+        if(socket.url.includes(String(questionId)) && socket.url.includes(username)){
+            socket.close();
+        }
+    }
+    if(!socket) {
+        socket = new WebSocket("ws://localhost:8080/api/v1/questions/" + questionId + "/" + username);
+        socket.onopen = () => {
+            connected = true;
+        }
+        socket.onerror = (error) => {
+            connected = false
+        }
+        socket.onclose = () => {
+            connected = false;
+        }
+    }
+    return socket;
+}
+
+export function createQuestion(username: string, subject: string): Promise<AxiosResponse<void>> {
+    return axios.post(questionUrl, {subject, username});
+}
+
+export function getQuestions(username: string): Promise<Question[]> {
+    return axios.get(questionUrl + username)
         .then(response => response.data);
 }
 
-export function getQuestion(questionId: number): Promise<Question>{
-    return axios.get(questionUrl + questionId)
+export function getQuestion(username: string, questionId: string): Promise<Question> {
+    return axios.get(questionUrl + username + "/" + questionId)
         .then(response => response.data)
 }
 
-export function answerQuestion(questionId: number, answer: string): Promise<AxiosResponse<void>> {
-    return axios.post(questionUrl + questionId, {username: null, answer});
+export function answerQuestion(questionId: string, username: string, answer: string): void {
+    if(!connected){
+        getSocket(questionId, username);
+    }
+    socket.send(answer);
 }
+
 
 export type Answer =
     {
-        id: number;
         username: string
         answer: string
         timestamp: string
@@ -30,7 +63,7 @@ export type Answer =
 
 export type Question =
     {
-        id: number;
+        id: string;
         starter: string
         question: string
         answers: []

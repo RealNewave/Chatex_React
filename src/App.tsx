@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import "./App.scss";
 import *  as threadService from "./ThreadService";
-import {Answer, Question} from "./ThreadService";
+import {Answer, getSocket, Question} from "./ThreadService";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
+import {nanoid} from "nanoid";
+
+let username: string = localStorage.getItem("username") || "";
 
 function App() {
     return (
@@ -15,12 +18,57 @@ function App() {
     );
 }
 
+function UsernameModal(props: any) {
+
+    const submitUsername = () => {
+        if (!inputValue) {
+            //show a message
+            return
+        }
+        username = inputValue;
+        localStorage.setItem("username", username);
+        setInputValue("");
+        window.location.reload();
+    }
+    const [inputValue, setInputValue] = useState("");
+
+
+    return (
+        <div className="username-modal">
+            <label>First you need a username!</label>
+            <input type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)}/>
+            <button onClick={submitUsername}>Submit</button>
+        </div>
+    )
+}
+
 function Home() {
     return (
         <div className="main-container">
-            <MainView/>
+            {!username ? <UsernameModal/> : <MainView/>}
         </div>
     )
+}
+
+function MainView() {
+
+    const [questions, setQuestions] = useState([] as Question[]);
+
+    useEffect(() => {
+        threadService.closeSocket();
+        threadService
+            .getQuestions(username)
+            .then(questions => setQuestions(questions));
+    }, []);
+
+    return (
+        <div className="content-overview">
+            <NewQuestion/>
+            {questions.map(question =>
+                <SubjectCard question={question} key={question.id}/>
+            )}
+        </div>
+    );
 }
 
 function MessageDetails(props: any) {
@@ -34,11 +82,15 @@ function MessageDetails(props: any) {
 
     useEffect(() => {
         getAnswers();
+        threadService.getSocket(questionId, username).onmessage = (message) => {
+            getAnswers()
+        }
     }, []);
+
 
     const getAnswers = () => {
         threadService
-            .getQuestion(+questionId)
+            .getQuestion(username, questionId)
             .then(response => {
                 question = response.question;
                 setAnswers(response.answers);
@@ -47,57 +99,35 @@ function MessageDetails(props: any) {
 
 
     const sendAnswer = () => {
-        threadService.answerQuestion(+questionId, answer)
-            .then(() => {
-                getAnswers();
-                setAnswer("");
-            })
+        threadService.answerQuestion(questionId, username, answer);
+        setAnswer("");
+        getAnswers();
     }
 
     return (
-        <div className="detail-view">
-            <h3 className="subject">{question}</h3>
+        <>
+            {!username ? <UsernameModal/> :
+                <div className="detail-view">
+                    <h3 className="subject">{question}</h3>
 
-            <div className="messages">
-                {answers.map(answer => <MessageView answer={answer} key={answer.id}></MessageView>)}
-            </div>
-            <div className="send-message">
-                <input type="text" placeholder="What would you like to say?" value={answer}
-                       onChange={(event) => setAnswer(event.target.value)}/>
-                <button onClick={sendAnswer}>Send</button>
-            </div>
-        </div>
-    )
-}
+                    <div className="messages">
+                        {answers?.map(answer => <MessageView answer={answer} key={nanoid()}></MessageView>)}
+                    </div>
+                    <div className="send-message">
+                        <input type="text" placeholder="What would you like to say?" value={answer}
+                               onChange={(event) => setAnswer(event.target.value)}
+                               onKeyDown={event => {
+                                   if(event.key === "Enter"){
+                                       event.preventDefault();
+                                       sendAnswer();
+                               }}}
 
-export function SubjectListCard(props: any) {
-    const subject: string = props.subject;
-    const usernames: string[] = props.usernames;
-    const time = props.time;
-    const splitNames = usernames.map(name => name.split(" "));
-
-    function showChatDetails() {
-
-    }
-
-    return (
-        <div className="h-card active" onClick={showChatDetails}>
-            <div className="flex-column center">
-                <p>{subject}</p>
-                <small>
-                    {splitNames.map(splitName => {
-                        const firstName = splitName[0][0];
-                        let lastName = "";
-                        if (splitName.length > 1) {
-                            lastName = splitName[splitName.length - 1][0]
-                        }
-                        return firstName + lastName;
-                    }).join(", ")
-                    }
-                </small>
-            </div>
-            <p className="right"><small className="text-secondary">{time}</small></p>
-        </div>
+                        />
+                        <button type="submit" onClick={sendAnswer}>Send</button>
+                    </div>
+                </div>
+            }
+        </>
     )
 }
 
@@ -109,7 +139,7 @@ function MessageView(props: any) {
             <div className="details-container">
                 <div className="sender-details">
                     <div>{props.answer.username}</div>
-                    <div>{props.answer.time}</div>
+                    <div>{props.answer.timestamp}</div>
                 </div>
                 <div className="message">
                     {props.answer.answer}
@@ -119,25 +149,6 @@ function MessageView(props: any) {
     )
 }
 
-function MainView() {
-
-    const [questions, setQuestions] = useState([] as Question[]);
-
-    useEffect(() => {
-        threadService
-            .getQuestions()
-            .then(questions => setQuestions(questions));
-    }, []);
-
-    return (
-        <div className="content-overview">
-            <NewQuestion/>
-            {questions.map(question =>
-                <SubjectCard question={question} key={question.id}/>
-            )}
-        </div>
-    );
-}
 
 function SubjectCard(props: any) {
     const question = props.question;
@@ -164,9 +175,6 @@ function SubjectCard(props: any) {
 }
 
 function NewQuestion() {
-
-    const starter: string = "Hans van Os";
-
     const [showButton, setShowButton] = useState(true);
     const [subject, setSubject] = useState("");
 
@@ -175,10 +183,11 @@ function NewQuestion() {
     }
 
     const submitForm = () => {
-        threadService.createQuestion(subject)
+        threadService.createQuestion(username, subject)
             .then(() => {
                 setSubject("");
                 showForm();
+                window.location.reload();
             });
 
     }
