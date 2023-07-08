@@ -1,9 +1,8 @@
 import axios, {AxiosResponse} from "axios";
 
-const questionUrl = "https://chatex-backend.onrender.com/api/v1/questions/";
-
 let socket: WebSocket;
 let connected = false;
+const axiosInstance = axios.create({headers: {"Access-Control-Allow-Origin": "*"}, baseURL:  "https://chatex-backend.onrender.com/api/v1/questions"});
 
 export function closeSocket(): void{
     if(socket){
@@ -33,16 +32,16 @@ export function getSocket(questionId: string, username: string): WebSocket {
 }
 
 export function createQuestion(username: string, subject: string): Promise<AxiosResponse<void>> {
-    return axios.post(questionUrl, {subject, username});
+    return axiosInstance.post("/", {subject, username});
 }
 
 export function getQuestions(username: string): Promise<Question[]> {
-    return axios.get(questionUrl + username)
+    return axiosInstance.get( "/" + username)
         .then(response => response.data);
 }
 
 export function getQuestion(username: string, questionId: string): Promise<Question> {
-    return axios.get(questionUrl + username + "/" + questionId)
+    return axiosInstance.get("/" + username + "/" + questionId)
         .then(response => response.data)
 }
 
