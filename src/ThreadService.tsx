@@ -2,7 +2,7 @@ import axios, {AxiosResponse} from "axios";
 
 let socket: WebSocket;
 let connected = false;
-const axiosInstance = axios.create({baseURL:  "https://chatex-backend.onrender.com/api/v1/questions"});
+const axiosInstance = axios.create({baseURL:  "https://chatex-backend.onrender.com/api/v1/questions", headers: {"Access-Control-Allow-Origin": "*"}});
 
 export function closeSocket(): void{
     if(socket){
