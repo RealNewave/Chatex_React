@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from "axios";
 
-const questionUrl = "http://localhost:8080/api/v1/questions/";
+const questionUrl = "https://chatex-backend.onrender.com/api/v1/questions/";
 
 let socket: WebSocket;
 let connected = false;
@@ -18,7 +18,7 @@ export function getSocket(questionId: string, username: string): WebSocket {
         }
     }
     if(!socket) {
-        socket = new WebSocket("ws://localhost:8080/api/v1/questions/" + questionId + "/" + username);
+        socket = new WebSocket("ws://chatex-backend.onrender.com/api/v1/questions/" + questionId + "/" + username);
         socket.onopen = () => {
             connected = true;
         }
