@@ -4,11 +4,12 @@ import * as questionService from "../QuestionService";
 import {nanoid} from "nanoid";
 import {LoginModal} from "../home/home";
 
-let username: string = localStorage.getItem("username") || ""
+let username: string = localStorage.getItem("username") || "";
 
 export function MessageDetails(props: any) {
 
     const questionId = document.location.pathname.slice(1);
+
 
     const [answers, setAnswers] = useState([] as Answer[]);
     const [answer, setAnswer] = useState("");
@@ -17,7 +18,7 @@ export function MessageDetails(props: any) {
 
     useEffect(() => {
         getAnswers();
-        questionService.getSocket(questionId, username).onmessage = (message) => {
+        questionService.getSocket(questionId).onmessage = (message) => {
             getAnswers()
         }
     }, []);
@@ -25,7 +26,7 @@ export function MessageDetails(props: any) {
 
     const getAnswers = () => {
         questionService
-            .getQuestion(username, questionId)
+            .getQuestion(questionId)
             .then(response => {
                 question = response.question;
                 setAnswers(response.answers);
@@ -34,7 +35,7 @@ export function MessageDetails(props: any) {
 
 
     const sendAnswer = () => {
-        questionService.answerQuestion(questionId, username, answer);
+        questionService.answerQuestion(questionId, answer);
         setAnswer("");
         getAnswers();
     }

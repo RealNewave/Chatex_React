@@ -4,15 +4,13 @@ import * as threadService from "../QuestionService";
 import {Link} from "react-router-dom";
 
 
-let username: string = localStorage.getItem("username") || ""
 export function MainView() {
 
     const [questions, setQuestions] = useState([] as Question[]);
-
     useEffect(() => {
         threadService.closeSocket();
         threadService
-            .getQuestions(username)
+            .getQuestions()
             .then(questions => setQuestions(questions));
     }, []);
 
@@ -59,7 +57,7 @@ function NewQuestion() {
     }
 
     const submitForm = () => {
-        threadService.createQuestion(username, subject)
+        threadService.createQuestion(subject)
             .then(() => {
                 setSubject("");
                 showForm();

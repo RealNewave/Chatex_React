@@ -1,18 +1,6 @@
 import React, {useState} from "react";
 import * as questionService from "../QuestionService";
 
-import {MainView} from "../main-view/main-view";
-
-let token: string = localStorage.getItem("token") || ""
-
-export function Home() {
-    return (
-        <div className="main-container">
-            {!token ? <LoginModal/> : <MainView/>}
-        </div>
-    )
-}
-
 export function LoginModal(props: any) {
 
     const [username, setUsername] = useState("");
@@ -25,23 +13,16 @@ export function LoginModal(props: any) {
         }
     }
 
-    const login = () => {
+    const login = async () => {
         valid();
-
-        questionService.login(username, password)
-            .then(response => {
-                localStorage.setItem("token", response);
-                localStorage.setItem("username", username);
-                setUsername("");
-                setPassword("");
-
-                window.location.reload();
-            });
+        await questionService.login(username, password);
+        setUsername("");
+        setPassword("");
     }
 
-    const create = () => {
+    const create = async () => {
         valid();
-        questionService.createResponder(username, password);
+        await questionService.createResponder(username, password);
     }
 
 
