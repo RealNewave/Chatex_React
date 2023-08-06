@@ -13,8 +13,7 @@ export function MessageDetails(props: any) {
 
     const [answers, setAnswers] = useState([] as Answer[]);
     const [answer, setAnswer] = useState("");
-
-    let question: string = "";
+    const [question, setQuestion] = useState("");
 
     useEffect(() => {
         getAnswers();
@@ -28,7 +27,7 @@ export function MessageDetails(props: any) {
         questionService
             .getQuestion(questionId)
             .then(response => {
-                question = response.question;
+                setQuestion(response.question);
                 setAnswers(response.answers);
             });
     }
@@ -42,24 +41,29 @@ export function MessageDetails(props: any) {
 
     return (
         <>
-            {!username ? <LoginModal/> :
-                <div className="detail-view">
-                    <h3 className="subject">{question}</h3>
-
-                    <div className="messages">
-                        {answers?.map(answer => <MessageView answer={answer} key={nanoid()}></MessageView>)}
+            {!username ? <LoginModal show={true}/> :
+                <div className="container vh-100 border border-primary">
+                    <h3 className="display-3">{question}</h3>
+                    <div className="row">
+                        {answers?.map(answer => <div className="col-12 my-2" key={nanoid()}><MessageView answer={answer} />
+                        </div>)}
                     </div>
-                    <div className="send-message">
-                        <input type="text" placeholder="What would you like to say?" value={answer}
+                    <div className="row my-2">
+                        <div className="col-9 pe-0">
+                            <input type="text" className="form-control" placeholder="What would you like to say?"
+                               value={answer}
                                onChange={(event) => setAnswer(event.target.value)}
                                onKeyDown={event => {
-                                   if(event.key === "Enter"){
+                                   if (event.key === "Enter") {
                                        event.preventDefault();
                                        sendAnswer();
-                                   }}}
-
-                        />
-                        <button type="submit" onClick={sendAnswer}>Send</button>
+                                   }
+                               }}
+                            />
+                        </div>
+                        <div className="col-3 ps-1">
+                        <button className="btn btn-primary w-100 " type="submit" onClick={sendAnswer}>Send</button>
+                        </div>
                     </div>
                 </div>
             }
@@ -70,17 +74,14 @@ export function MessageDetails(props: any) {
 function MessageView(props: any) {
 
     return (
-        <div className="text-bubble">
-            <div></div>
-            <div className="details-container">
-                <div className="sender-details">
-                    <div>{props.answer.username}</div>
-                    <div>{props.answer.timestamp}</div>
-                </div>
-                <div className="message">
+        <div className="card border border-success">
+            <div className="card-body">
+                <div className="card-text">
                     {props.answer.answer}
                 </div>
             </div>
+            <small
+                className="card-footer text-body-secondary">{props.answer.username} | {props.answer.timestamp}</small>
         </div>
     )
 }

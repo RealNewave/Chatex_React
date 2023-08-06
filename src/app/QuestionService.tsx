@@ -1,26 +1,31 @@
 import axios, {AxiosResponse} from "axios";
+import {LoginModal} from "./home/home";
 
 let socket: WebSocket;
 let connected = false;
-let token: string = localStorage.getItem("token") || "";
-let username: string = localStorage.getItem("username") || "";
-axios.defaults.baseURL =  "http://localhost:8080/api/v1/questions"
+const axiosInstance = axios.create({
+    baseURL: "http://localhost:8080/api/v1/questions",
+    headers: {
+        "Authorization": localStorage.getItem("token") || "",
+        "username": localStorage.getItem("username") || ""
+    },
 
-export function closeSocket(): void{
-    if(socket){
+});
+
+export function closeSocket(): void {
+    if (socket) {
         socket.close();
     }
-
 }
 
 export function getSocket(questionId: string): WebSocket {
-    if(socket){
-        if(socket.url.includes(String(questionId)) && socket.url.includes(username)){
+    if (socket) {
+        if (socket.url.includes(String(questionId))) {
             socket.close();
         }
     }
-    if(!socket) {
-        socket = new WebSocket("ws://localhost:8080/api/v1/questions/" + questionId + "/" + username);
+    if (!socket) {
+        socket = new WebSocket("ws://localhost:8080/api/v1/questions/" + questionId);
         socket.onopen = () => {
             connected = true;
         }
@@ -35,16 +40,16 @@ export function getSocket(questionId: string): WebSocket {
 }
 
 export function createQuestion(subject: string): Promise<AxiosResponse<void>> {
-    return axios.post("/", {subject, username}, {headers: {"Authorization": token, "username": username}})
+    return axiosInstance.post("/", {subject})
 }
 
 export function getQuestions(): Promise<Question[]> {
-    return axios.get( "/", {headers: {"Authorization": token, "username": username}})
+        return axiosInstance.get("/")
         .then(response => response.data);
 }
 
 export function getQuestion(questionId: string): Promise<Question> {
-    return axios.get("/" + username + "/" + questionId, {headers: {"Authorization": token, "username": username}})
+    return axiosInstance.get("/" + questionId)
         .then(response => response.data);
 }
 
@@ -62,7 +67,7 @@ export function createResponder(username: string, password: string) {
 }
 
 export function answerQuestion(questionId: string, answer: string): void {
-    if(!connected){
+    if (!connected) {
         getSocket(questionId);
     }
     socket.send(answer);
@@ -70,15 +75,15 @@ export function answerQuestion(questionId: string, answer: string): void {
 
 
 export type Answer = {
-        username: string
-        answer: string
-        timestamp: string
-    }
+    username: string
+    answer: string
+    timestamp: string
+}
 
 export type Question = {
-        id: string;
-        starter: string
-        question: string
-        answers: []
-        timestamp: string
-    }
+    id: string;
+    starter: string
+    question: string
+    answers: []
+    timestamp: string
+}

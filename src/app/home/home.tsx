@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import * as questionService from "../QuestionService";
+import Modal from "react-bootstrap/Modal";
 
 export function LoginModal(props: any) {
 
@@ -18,25 +19,36 @@ export function LoginModal(props: any) {
         await questionService.login(username, password);
         setUsername("");
         setPassword("");
+        props.setShow(false);
     }
 
     const create = async () => {
         valid();
         await questionService.createResponder(username, password);
+        props.setShow(false);
     }
 
 
     return (
-        <div className="login-modal">
-            <label htmlFor="username">Username</label>
-            <input id="username" type="text" value={username}
-                   onChange={(event) => setUsername(event.target.value)}/>
-            <label htmlFor="password">Password</label>
+        <Modal show={props.show}>
+            <Modal.Header>
+                <Modal.Title>Create a new Question</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <label htmlFor="username" className="form-label">Username</label>
+                <input id="username" type="text" className="form-control" value={username}
+                       onChange={(event) => setUsername(event.target.value)}/>
 
-            <input id="password" type="text" value={password}
-                   onChange={(event) => setPassword(event.target.value)}/>
-            <button onClick={login}>Login</button>
-            <button onClick={create}>Create</button>
-        </div>
+                <label htmlFor="password" className="form-label">Password</label>
+                <input id="password" type="text" className="form-control" value={password}
+                       onChange={(event) => setPassword(event.target.value)}/>
+            </Modal.Body>
+            <Modal.Footer>
+
+                <button className="btn btn-primary" type="submit" onClick={login}>Login</button>
+                <button className="btn btn-primary" type="submit" onClick={create}>Create</button>
+            </Modal.Footer>
+
+        </Modal>
     )
 }

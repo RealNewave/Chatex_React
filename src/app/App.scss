@@ -1,261 +1,262 @@
-$background-color: #2a2c2d;
-$text-color: white;
-$primary-border-color: purple;
-$secondary-border-color: palevioletred;
-$detail-color: slateblue;
-$subtext-color: grey;
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-*, ::before, ::after {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 15px;
-  font-family: "Calibri", serif;
-  color: white;
-  background-color: #2a2c2d;
-}
-
-.main-container {
-  border: solid $primary-border-color;
-  min-height: 90vh;
-  height: 100%;
-  width: 70%;
-  margin: 30px auto auto;
-}
-
-.content-overview {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  margin-top: 10px;
-  gap: 10px;
-}
-
-.login-modal {
-  width: 50vw;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  label {
-    margin: 0 auto;
-  }
-  input {
-    border-color: $detail-color;
-    border-radius: 10px;
-  }
-  button {
-    width: 50%;
-    margin: 0 auto;
-  }
-}
-
-
-.new-thread {
-  --color: $detail-color;
-  grid-area: title;
-  margin: 0 50px;
-  background-color: #2a2c2d;
-  border-color: $detail-color;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.v-card {
-  --color: $secondary-border-color;
-  flex: 0 1 calc(80% / 3);
-  min-width: 200px;
-  max-width: calc(80% / 3);
-  height: 300px;
-  border: solid 1px $secondary-border-color;
-  border-radius: 10px;
-  display: grid;
-  grid-template-areas: "header" "title" "content" "subtext";
-  grid-template-rows: 5fr minmax(0, 2fr) minmax(0, 3fr) 2fr;
-  grid-template-columns: minmax(0, 1fr);
-
-
-  .header {
-    grid-area: header;
-    border-radius: inherit;
-    background-color: $detail-color;
-    margin: 10px 10px;
-  }
-
-  .title {
-    grid-area: title;
-    margin: 0 10px;
-  }
-
-  input {
-    width: 100%;
-    height: 30px;
-    border-radius: 4px;
-    border: 1px solid $detail-color;
-    background: $background-color;
-    color: $text-color;
-  }
-
-  button {
-    display: block;
-    margin: 0 auto;
-    width: 100px;
-  }
-
-
-  .content {
-    grid-area: content;
-    font-size: 12px;
-    overflow: auto;
-    margin: 0 10px;
-  }
-
-  .subtext {
-    grid-area: subtext;
-    padding-top: 5px;
-    font-size: 10px;
-    color: $subtext-color;
-    border-top: solid 1px $subtext-color;
-    margin: 5px 10px;
-
-    u {
-      text-decoration: underline;
-      text-decoration-color: $detail-color;
-    }
-  }
-}
-
-.clickable {
-  &:hover {
-    box-shadow: 0 15px 24px var(--color);
-  }
-}
-
-.detail-view {
-  border: 1px solid $secondary-border-color;
-  height: 90vh;
-  width: 90vw;
-  margin: 0 auto;
-  position: relative;
-
-  .messages {
-    max-height: 90vh;
-    overflow: scroll;
-  }
-
-  .subject {
-    text-align: center;
-  }
-
-  .send-message {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    border-radius: 5px;
-
-    input{
-      width: 90%;
-    }
-    button {
-      width: 10%;
-    }
-
-  }
-}
-
-.text-bubble {
-  display: grid;
-  grid-template-areas: "l r";
-  grid-template-columns: 0fr 7fr;
-
-
-  .profile {
-    grid-area: l;
-    justify-self: center;
-    align-self: center;
-    width: 80%;
-    text-align: center;
-    border: 1px solid white;
-    border-radius: 50%;
-    padding: 10px;
-  }
-
-  .details-container {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-    padding: 10px;
-    gap: 5px;
-    border: 1px solid purple;
-    border-radius: 10px;
-
-    .sender-details {
-      display: flex;
-      justify-content: start;
-      gap: 10px;
-      font-size: 12px;
-      color: $subtext-color;
-    }
-
-    .message {
-      font-weight: bold;
-    }
-  }
-}
-
-.h-card {
-  display: grid;
-  grid-template-areas:
-        "l c r";
-  grid-template-columns: 1fr 3fr 1fr;
-  justify-items: center;
-  align-items: center;
-  border-bottom: 1px solid $subtext-color;
-  color: white;
-  white-space: nowrap;
-  height: 80px;
-  grid-auto-flow: column;
-
-  .left {
-    grid-area: l;
-    align-self: center;
-    justify-self: start;
-    margin-left: 8px;
-    margin-right: auto;
-  }
-
-  .center {
-    grid-area: c;
-    justify-self: start;
-  }
-
-  .right {
-    grid-area: r;
-    align-self: start;
-    justify-self: end;
-    margin-right: 8px;
-
-  }
-
-  .flex-column {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-  }
-
-  .profile {
-    text-align: center;
-    border: 1px solid white;
-    border-radius: 50%;
-    padding: 10px;
-  }
-
-  .active {
-  }
-}
-
-
-
-
+//$background-color: #2a2c2d;
+//$text-color: white;
+//$primary-border-color: purple;
+//$secondary-border-color: palevioletred;
+//$detail-color: slateblue;
+//$subtext-color: grey;
+//
+//
+//*, ::before, ::after {
+//  box-sizing: border-box;
+//}
+//
+//html {
+//  font-size: 15px;
+//  font-family: "Calibri", serif;
+//  color: white;
+//  background-color: #2a2c2d;
+//}
+//
+//.main-container {
+//  border: solid $primary-border-color;
+//  min-height: 90vh;
+//  height: 100%;
+//  width: 70%;
+//  margin: 30px auto auto;
+//}
+//
+//.content-overview {
+//  display: flex;
+//  flex-flow: row wrap;
+//  justify-content: center;
+//  margin-top: 10px;
+//  gap: 10px;
+//}
+//
+//.login-modal {
+//  //position: absolute;
+//  width: 50vw;
+//  margin: 0 auto;
+//  display: flex;
+//  flex-direction: column;
+//  justify-content: space-between;
+//  background: black;
+//
+//  label {
+//    margin: 0 auto;
+//  }
+//  input {
+//    border-color: $detail-color;
+//    border-radius: 10px;
+//  }
+//  button {
+//    width: 50%;
+//    margin: 0 auto;
+//  }
+//}
+//
+//
+//.new-thread {
+//  --color: $detail-color;
+//  grid-area: title;
+//  margin: 0 50px;
+//  background-color: #2a2c2d;
+//  border-color: $detail-color;
+//  border-radius: 10px;
+//  cursor: pointer;
+//}
+//
+//.v-card {
+//  --color: $secondary-border-color;
+//  flex: 0 1 calc(80% / 3);
+//  min-width: 200px;
+//  max-width: calc(80% / 3);
+//  height: 300px;
+//  border: solid 1px $secondary-border-color;
+//  border-radius: 10px;
+//  display: grid;
+//  grid-template-areas: "header" "title" "content" "subtext";
+//  grid-template-rows: 5fr minmax(0, 2fr) minmax(0, 3fr) 2fr;
+//  grid-template-columns: minmax(0, 1fr);
+//
+//
+//  .header {
+//    grid-area: header;
+//    border-radius: inherit;
+//    background-color: $detail-color;
+//    margin: 10px 10px;
+//  }
+//
+//  .title {
+//    grid-area: title;
+//    margin: 0 10px;
+//  }
+//
+//  input {
+//    width: 100%;
+//    height: 30px;
+//    border-radius: 4px;
+//    border: 1px solid $detail-color;
+//    background: $background-color;
+//    color: $text-color;
+//  }
+//
+//  button {
+//    display: block;
+//    margin: 0 auto;
+//    width: 100px;
+//  }
+//
+//
+//  .content {
+//    grid-area: content;
+//    font-size: 12px;
+//    overflow: auto;
+//    margin: 0 10px;
+//  }
+//
+//  .subtext {
+//    grid-area: subtext;
+//    padding-top: 5px;
+//    font-size: 10px;
+//    color: $subtext-color;
+//    border-top: solid 1px $subtext-color;
+//    margin: 5px 10px;
+//
+//    u {
+//      text-decoration: underline;
+//      text-decoration-color: $detail-color;
+//    }
+//  }
+//}
+//
+//.clickable {
+//  &:hover {
+//    box-shadow: 0 15px 24px var(--color);
+//  }
+//}
+//
+//.detail-view {
+//  border: 1px solid $secondary-border-color;
+//  height: 90vh;
+//  width: 90vw;
+//  margin: 0 auto;
+//  position: relative;
+//
+//  .messages {
+//    max-height: 90vh;
+//    overflow: scroll;
+//  }
+//
+//  .subject {
+//    text-align: center;
+//  }
+//
+//  .send-message {
+//    position: absolute;
+//    bottom: 0;
+//    width: 100%;
+//    border-radius: 5px;
+//
+//    input{
+//      width: 90%;
+//    }
+//    button {
+//      width: 10%;
+//    }
+//
+//  }
+//}
+//
+//.text-bubble {
+//  display: grid;
+//  grid-template-areas: "l r";
+//  grid-template-columns: 0fr 7fr;
+//
+//
+//  .profile {
+//    grid-area: l;
+//    justify-self: center;
+//    align-self: center;
+//    width: 80%;
+//    text-align: center;
+//    border: 1px solid white;
+//    border-radius: 50%;
+//    padding: 10px;
+//  }
+//
+//  .details-container {
+//    display: flex;
+//    flex-direction: column;
+//    margin: 10px;
+//    padding: 10px;
+//    gap: 5px;
+//    border: 1px solid purple;
+//    border-radius: 10px;
+//
+//    .sender-details {
+//      display: flex;
+//      justify-content: start;
+//      gap: 10px;
+//      font-size: 12px;
+//      color: $subtext-color;
+//    }
+//
+//    .message {
+//      font-weight: bold;
+//    }
+//  }
+//}
+//
+//.h-card {
+//  display: grid;
+//  grid-template-areas:
+//        "l c r";
+//  grid-template-columns: 1fr 3fr 1fr;
+//  justify-items: center;
+//  align-items: center;
+//  border-bottom: 1px solid $subtext-color;
+//  color: white;
+//  white-space: nowrap;
+//  height: 80px;
+//  grid-auto-flow: column;
+//
+//  .left {
+//    grid-area: l;
+//    align-self: center;
+//    justify-self: start;
+//    margin-left: 8px;
+//    margin-right: auto;
+//  }
+//
+//  .center {
+//    grid-area: c;
+//    justify-self: start;
+//  }
+//
+//  .right {
+//    grid-area: r;
+//    align-self: start;
+//    justify-self: end;
+//    margin-right: 8px;
+//
+//  }
+//
+//  .flex-column {
+//    display: flex;
+//    flex-direction: column;
+//    align-items: start;
+//  }
+//
+//  .profile {
+//    text-align: center;
+//    border: 1px solid white;
+//    border-radius: 50%;
+//    padding: 10px;
+//  }
+//
+//  .active {
+//  }
+//}
